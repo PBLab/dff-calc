@@ -13,6 +13,13 @@ class DffCalculator:
     Takes a matrix with rows as independent fluorescent traces,
     and returns a similar-sized matrix with the corresponding dF/F values
     calculated based on https://www.nature.com/articles/nprot.2010.169
+    Parameters:
+        data [np.ndarray]: (cell x time)
+        fps [float]: frame rate (Hz)
+        tau_0 [float]: exponential smoothing factor in seconds
+        tau_1 [float]: F0 smoothing parameter in seconds
+        tau_2 [float]: time window before t to minimize
+        invert [bool]: False (default) if the transient is expected to be positive, True otherwise
     """
     data = attr.ib(validator=instance_of(np.ndarray))
     fps = attr.ib(default=30., validator=instance_of(float))  # Hz
@@ -29,7 +36,7 @@ class DffCalculator:
 
     def calc(self) -> np.ndarray:
         """ Main function to run the calculation
-        :returns: Filtered dF/F matri
+        :returns: Filtered dF/F matrix
         """
         self.__calc_f0()
         self.__calc_dff_unfiltered()
@@ -60,7 +67,7 @@ class DffCalculator:
 
     def __calc_dff_unfiltered(self):
         """ Subtract baseline from current fluorescence """
-        raw_calc = (self.data - self.f0.values.ravel()) / self.f0.values.ravel()
+        raw_calc = (self.data - self.f0.values.T) / self.f0.values.T
         self.unfiltered_dff = pd.DataFrame(raw_calc)
         self.unfiltered_dff.fillna(0)
 

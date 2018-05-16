@@ -1,6 +1,3 @@
-"""
-__author__ = Hagai Hargil
-"""
 import numpy as np
 import attr
 from attr.validators import instance_of
@@ -13,7 +10,11 @@ class DffCalculator:
     Takes a matrix with rows as independent fluorescent traces,
     and returns a similar-sized matrix with the corresponding dF/F values
     calculated based on https://www.nature.com/articles/nprot.2010.169
+    The starting frames might have a 0 dF/F value, due to NaNs being
+    converted to 0. This happens following the running window operations
+    that are preformed on the data.
     Parameters:
+    -----------
         data [np.ndarray]: (cell x time)
         fps [float]: frame rate (Hz)
         tau_0 [float]: exponential smoothing factor in seconds
@@ -58,8 +59,7 @@ class DffCalculator:
 
     def __calc_f0(self):
         """
-        Return the F_0(t) baseline for the dF/F calculation using a boxcar window
-        :return:
+        Create the F_0(t) baseline for the dF/F calculation using a boxcar window
         """
         data = pd.DataFrame(self.data.T)
         self.f0 = data.rolling(window=self.tau_1, win_type='boxcar').mean()\
@@ -75,3 +75,4 @@ class DffCalculator:
         """ Apply an exponentially weighted moving average to the dF/F data """
         alpha = 1 - np.exp(-1/self.tau_0)
         self.dff = self.unfiltered_dff.ewm(alpha=alpha, min_periods=self.min_per).mean()
+        self.dff.fillna(0)

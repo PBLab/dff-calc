@@ -9,7 +9,7 @@ dff_calc
    :target: https://travis-ci.org
    :alt: Latest Travis CI build status
 
-Simple dF/F calculation for neural calcium traces
+Simple dF/F calculation for neural calcium traces, based on https://www.nature.com/articles/nprot.2010.169
 
 Usage
 -----

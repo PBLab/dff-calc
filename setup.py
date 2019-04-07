@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="dff_calc",
-    version="0.1.3",
+    version="0.1.4",
     url="https://github.com/PBLab/dFF-calc.git",
 
     author="Hagai Har-Gil",

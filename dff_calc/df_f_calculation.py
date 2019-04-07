@@ -4,7 +4,7 @@ from attr.validators import instance_of
 import pandas as pd
 
 
-@attr.s(slots=True)
+@attr.s
 class DffCalculator:
     """
     Takes a matrix with rows as independent fluorescent traces,
@@ -46,13 +46,13 @@ class DffCalculator:
         """ Main function to run the calculation
         :returns: Filtered dF/F matrix
         """
-        self.__calc_f0()
-        self.__calc_dff_unfiltered()
-        self.__filter_dff()
+        self._calc_f0()
+        self._calc_dff_unfiltered()
+        self._filter_dff()
         if self.data.ndim == 1:
-            return self.dff.values.ravel()
+            return self.dff.to_numpy().ravel()
         else:
-            return self.dff.values
+            return self.dff.to_numpy()
 
     def __attrs_post_init__(self):
         """ Change params to have fitting units """
@@ -64,7 +64,7 @@ class DffCalculator:
         if self.invert:
             self.data = -self.data
 
-    def __calc_f0(self):
+    def _calc_f0(self):
         """
         Create the F_0(t) baseline for the dF/F calculation using a boxcar window
         """
@@ -77,16 +77,16 @@ class DffCalculator:
             + np.finfo(float).eps
         )
 
-    def __calc_dff_unfiltered(self):
+    def _calc_dff_unfiltered(self):
         """ Subtract baseline from current fluorescence """
-        raw_calc = (self.data - self.f0.values.T) / self.f0.values.T
+        f0 = self.f0.to_numpy()
+        raw_calc = (self.data.T - f0) / f0
         self.unfiltered_dff = pd.DataFrame(raw_calc).fillna(0)
 
-    def __filter_dff(self):
+    def _filter_dff(self):
         """ Apply an exponentially weighted moving average to the dF/F data """
-        alpha = 1 - np.exp(-1 / self.tau_0)
         self.dff = (
-            self.unfiltered_dff.ewm(alpha=alpha, min_periods=self.min_per)
+            self.unfiltered_dff.ewm(halflife=self.tau_0, min_periods=self.min_per)
             .mean()
             .fillna(0)
         )

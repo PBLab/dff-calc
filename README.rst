@@ -24,7 +24,7 @@ Installation
 
 Requirements
 ^^^^^^^^^^^^
-Python 3.6+, numpy, pandas
+Python 3.6+, `numpy`, `pandas`, `attrs`
 
 Licence
 -------

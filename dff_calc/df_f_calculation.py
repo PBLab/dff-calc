@@ -52,7 +52,7 @@ class DffCalculator:
         if self.data.ndim == 1:
             return self.dff.to_numpy().ravel()
         else:
-            return self.dff.to_numpy()
+            return self.dff.to_numpy().T
 
     def __attrs_post_init__(self):
         """ Change params to have fitting units """

@@ -22,11 +22,18 @@ class DffCalculator:
         tau_2 [float]: time window before t to minimize
         invert [bool]: False (default) if the transient is expected to be positive, True otherwise
     """
+
     data = attr.ib(validator=instance_of(np.ndarray))
-    fps = attr.ib(default=30., validator=instance_of(float))  # Hz
-    tau_0 = attr.ib(default=0.1, validator=instance_of(float))  # seconds, EWMA parameter
-    tau_1 = attr.ib(default=0.35, validator=instance_of(float))  # seconds, smoothed F0 parameter
-    tau_2 = attr.ib(default=2., validator=instance_of(float))  # seconds, time window before t to minimize
+    fps = attr.ib(default=30.0, validator=instance_of(float))  # Hz
+    tau_0 = attr.ib(
+        default=0.1, validator=instance_of(float)
+    )  # seconds, EWMA parameter
+    tau_1 = attr.ib(
+        default=0.35, validator=instance_of(float)
+    )  # seconds, smoothed F0 parameter
+    tau_2 = attr.ib(
+        default=2.0, validator=instance_of(float)
+    )  # seconds, time window before t to minimize
     invert = attr.ib(default=False, validator=instance_of(bool))
     f0 = attr.ib(init=False)
     unfiltered_dff = attr.ib(init=False)
@@ -62,17 +69,24 @@ class DffCalculator:
         Create the F_0(t) baseline for the dF/F calculation using a boxcar window
         """
         data = pd.DataFrame(self.data.T)
-        self.f0 = data.rolling(window=self.tau_1, win_type='boxcar').mean()\
-                      .rolling(window=self.tau_2, min_periods=self.min_per).min() + np.finfo(float).eps
+        self.f0 = (
+            data.rolling(window=self.tau_1, win_type="boxcar")
+            .mean()
+            .rolling(window=self.tau_2, min_periods=self.min_per)
+            .min()
+            + np.finfo(float).eps
+        )
 
     def __calc_dff_unfiltered(self):
         """ Subtract baseline from current fluorescence """
         raw_calc = (self.data - self.f0.values.T) / self.f0.values.T
-        self.unfiltered_dff = pd.DataFrame(raw_calc)
-        self.unfiltered_dff.fillna(0)
+        self.unfiltered_dff = pd.DataFrame(raw_calc).fillna(0)
 
     def __filter_dff(self):
         """ Apply an exponentially weighted moving average to the dF/F data """
-        alpha = 1 - np.exp(-1/self.tau_0)
-        self.dff = self.unfiltered_dff.ewm(alpha=alpha, min_periods=self.min_per).mean()
-        self.dff.fillna(0)
+        alpha = 1 - np.exp(-1 / self.tau_0)
+        self.dff = (
+            self.unfiltered_dff.ewm(alpha=alpha, min_periods=self.min_per)
+            .mean()
+            .fillna(0)
+        )

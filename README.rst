@@ -13,10 +13,9 @@ Simple dF/F calculation for neural calcium traces, based on https://www.nature.c
 
 Usage
 -----
-1. ``from dff_calc.df_f_calculation import DffCalculator``
-2. Create an instance with an two-dimensional array, the rows being individual traces. Other parameters are
-documented in the code.
-3. Call ``.calc()`` on that instance. The returned array contains the calculated dF/F values.
+1. ``from dff_calc import dff_calc``
+2. Coerce your data to be in a (cell x time) 2D numpy array.
+3. To calculate the dF/F, call ``dff = dff_calc(raw_data)`` Other parameters are listed in the docstring.
 
 Installation
 ------------
@@ -24,12 +23,12 @@ Installation
 
 Requirements
 ^^^^^^^^^^^^
-Python 3.6+, `numpy`, `pandas`, `attrs`
+Python 3.6+, `numpy`, `pandas`, `scipy`
 
 Licence
 -------
 
-MIT
+Apache 2.0
 
 Authors
 -------

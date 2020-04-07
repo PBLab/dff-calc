@@ -15,14 +15,14 @@ Usage
 -----
 1. ``from dff_calc import dff_calc``
 2. Coerce your data to be in a (cell x time) 2D numpy array.
-3. To calculate the dF/F, call ``dff = dff_calc(raw_data)`` Other parameters are listed in the docstring.
+3. To calculate the dF/F, call ``dff = dff_calc(raw_data)``. Other parameters are listed in the docstring.
 
 Installation
 ------------
 ``pip install dff-calc``
 
 Requirements
-^^^^^^^^^^^^
+------------
 Python 3.6+, `numpy`, `pandas`, `scipy`
 
 Licence

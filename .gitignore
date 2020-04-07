@@ -35,3 +35,6 @@ nosetests.xml
 .project
 .pydevproject
 dff_calc/.mypy_cache/
+
+.mypy_cache/
+.vscode/

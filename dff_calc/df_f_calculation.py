@@ -24,7 +24,7 @@ def dff_calc(
     Parameters
     ----------
     data : np.ndarray
-        dF/F traces with dimensions (cell x time)
+        Fluorescence traces with dimensions (cell x time)
     fps : float, optional
         Frame rate (Hz)
     tau_0 : float, optional

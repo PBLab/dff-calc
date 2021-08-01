@@ -89,7 +89,7 @@ def _calc_dff_unfiltered(f0: pd.DataFrame, data: np.ndarray, low_background_flag
     """ Subtract baseline from current fluorescence """
     f0 = f0.to_numpy()
     if low_background_flag:
-        raw_calc = (data.T  - f0) / (f0 + low_background_offset_value) # artificially increasing the baseline for low-background imaging modalities, so as to prevent unrealistically high dF/F values.
+        raw_calc = (data.T  + 2*low_background_offset_value - f0) / (f0 + low_background_offset_value) # artificially increasing the baseline for low-background imaging modalities, so as to prevent unrealistically high dF/F values when F0 is 0, and negative dF when F is 0.
     else:
         raw_calc = (data.T - f0) / f0
     unfiltered_dff = pd.DataFrame(raw_calc).fillna(0)
